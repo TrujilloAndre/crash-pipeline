@@ -1,0 +1,7 @@
+{
+  "task": "binary",
+  "target": "crash_type",
+  "positive_class": 1,
+  "policy": "Balanced (maximize F1 on train-side probs)",
+  "primary_metric": "f1"
+}

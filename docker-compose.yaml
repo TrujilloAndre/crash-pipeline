@@ -1,0 +1,151 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "${RABBIT_PORT}:5672"     # AMQP
+      - "${RABBIT_UI}:15672"      # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBIT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASS}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "${MINIO_API_PORT}:9000"
+      - "${MINIO_CONSOLE_PORT}:9001"
+    volumes:
+      - ./minio-data:/data
+    environment:
+      MINIO_ROOT_USER: ${MINIO_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_PASS}
+      MINIO_PROMETHEUS_AUTH_TYPE: public
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/ready"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+  extractor:
+    build: ./extractor
+    container_name: extractor
+    env_file: .env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    restart: unless-stopped
+
+  transformer:
+    build: ./transformer
+    container_name: transformer
+    env_file: .env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    restart: unless-stopped
+
+  cleaner:
+    build: ./cleaner
+    container_name: cleaner
+    env_file: .env
+    depends_on:
+      rabbitmq: { condition: service_healthy }
+      minio:    { condition: service_healthy }
+    volumes:
+      - ./data/gold:/data/gold
+    restart: unless-stopped
+
+  scheduler:
+    build: ./scheduler
+    container_name: scheduler
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data/scheduler:/data
+
+  streamlit:
+    build: ./streamlit          # folder containing the Dockerfile & Home.py
+    container_name: streamlit
+    ports:
+      - "8501:8501"
+      - "8000:8000" 
+    environment:
+      # Point the UI to your backend gateway used by Home.py (API_BASE)
+      # If your API is also in compose, use its service name + port.
+      API_BASE: "http://scheduler:8080"  
+      MINIO_URL: "http://minio:9000"
+      RABBIT_API: "http://rabbitmq:15672/api"
+      RABBIT_USER: "guest"
+      RABBIT_PASS: "guest"
+      MINIO_USER: "${MINIO_USER}"
+      MINIO_PASS: "${MINIO_PASS}"
+      EXTRACT_QUEUE: "extract"
+      TRANSFORM_QUEUE: "transform"
+      CLEAN_QUEUE: "clean"
+      GOLD_DB_PATH: "/data/gold/gold.duckdb"
+      GOLD_TABLE: 'gold."gold"."crashes"'
+      MODEL_ARTIFACT_PATH: "/app/artifacts/model.pkl"
+      THRESHOLD_PATH: "/app/artifacts/threshold.txt"
+      LABELS_PATH: "/app/artifacts/labels.json"
+    volumes:
+      - ./data/gold:/data/gold:ro
+      - ./streamlit/artifacts:/app/artifacts:ro
+    depends_on:
+      - rabbitmq
+      - minio
+      # If you serve Streamlit behind a reverse proxy with a path, add:
+      # STREAMLIT_SERVER_BASE_URL_PATH: "/app"
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  
+  rabbitmq-exporter:
+    image: kbudde/rabbitmq-exporter
+    ports:
+      - "9419:9419"
+    environment:
+      RABBIT_URL: http://rabbitmq:15672
+      RABBIT_USER: guest
+      RABBIT_PASSWORD: guest
+    depends_on:
+      - rabbitmq
+    restart: unless-stopped
+
+  
+volumes:
+  prometheus_data:
+
+

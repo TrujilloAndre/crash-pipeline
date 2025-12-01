@@ -1,0 +1,20 @@
+- alert: ExtractorFailures
+  expr: increase(extractor_jobs_failed_total[5m]) > 0
+  for: 2m
+  labels:
+    severity: warning
+  annotations:
+    message: "Extractor failing recently"
+
+- alert: CleanerTooSlow
+  expr: histogram_quantile(0.95, sum(rate(cleaner_latency_seconds_bucket[5m])) by (le)) > 5
+  for: 2m
+
+- alert: ModelAccuracyLow
+  expr: model_accuracy < 0.55
+  for: 10m
+  labels:
+    severity: warning
+  annotations:
+    summary: "ML model accuracy is low"
+    description: "model_accuracy has been below 0.55 for 10 minutes. Investigate recent model changes, data drift, or pipeline issues."
