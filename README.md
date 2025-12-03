@@ -123,20 +123,24 @@ Grafana visualizes latency, row counts, object counts, queue depth, failures, an
 
 ---
 
-## 3. Screenshots (Placeholders Required)
-
-Replace the placeholders after you take screenshots:
+## 3. Screenshots
 
 ```
-***SCREENSHOT OF EXTRACTOR RUNNING HERE***
-***SCREENSHOT OF TRANSFORMER RUNNING HERE***
-***SCREENSHOT OF CLEANER RUNNING HERE***
-***SCREENSHOT OF STREAMLIT HOME PAGE HERE***
-***SCREENSHOT OF STREAMLIT MODEL PAGE HERE***
-***SCREENSHOT OF STREAMLIT PREDICTION PAGE HERE***
-***SCREENSHOT OF DUCKDB TABLES IN CLI/NOTEBOOK HERE***
-***SCREENSHOT OF GRAFANA DASHBOARDS HERE***
-***SCREENSHOT OF PROMETHEUS TARGET LIST HERE***
+### Extractor
+<img width="1675" height="593" alt="image" src="https://github.com/user-attachments/assets/947ca2b5-bd11-4f6b-a3c9-4549da8d193b" />
+### Transformer
+<img width="1182" height="112" alt="image" src="https://github.com/user-attachments/assets/321c38ce-9dfd-4706-81d3-9dbfa2d756e8" />
+### Cleaner
+<img width="1816" height="491" alt="image" src="https://github.com/user-attachments/assets/061fc27e-39a8-4eb7-93fc-b2c91b218259" />
+### Streamlit
+<img width="1409" height="690" alt="image" src="https://github.com/user-attachments/assets/fd43b4bb-5155-403f-9805-30f38aad539d" />
+<img width="1409" height="690" alt="image" src="https://github.com/user-attachments/assets/9e54e589-4769-46d7-a5d8-155c3eaed92f" />
+<img width="1089" height="630" alt="image" src="https://github.com/user-attachments/assets/b33ba79c-fb4c-483c-983f-9f42958a94c2" />
+### Grafana Dashboards
+<img width="1550" height="629" alt="image" src="https://github.com/user-attachments/assets/7463ed33-5dd2-4b24-a714-435c7c7b7056" />
+<img width="1675" height="593" alt="image" src="https://github.com/user-attachments/assets/c057f8a0-9485-4164-a108-cdae3510f406" />
+<img width="1675" height="593" alt="image" src="https://github.com/user-attachments/assets/9f057712-eb5d-46c2-b4de-006dddc657f3" />
+
 ```
 
 ---
