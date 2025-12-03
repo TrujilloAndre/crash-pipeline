@@ -125,7 +125,7 @@ Grafana visualizes latency, row counts, object counts, queue depth, failures, an
 
 ## 3. Screenshots
 
-```
+
 ### Extractor
 <img width="1675" height="593" alt="image" src="https://github.com/user-attachments/assets/947ca2b5-bd11-4f6b-a3c9-4549da8d193b" />
 ### Transformer
@@ -141,7 +141,6 @@ Grafana visualizes latency, row counts, object counts, queue depth, failures, an
 <img width="1675" height="593" alt="image" src="https://github.com/user-attachments/assets/c057f8a0-9485-4164-a108-cdae3510f406" />
 <img width="1675" height="593" alt="image" src="https://github.com/user-attachments/assets/9f057712-eb5d-46c2-b4de-006dddc657f3" />
 
-```
 
 ---
 
@@ -291,3 +290,65 @@ Pipeline/
 │
 └── README.md                # This documentation
 ```
+
+---
+
+## BONUS Azure Deployment Summary
+
+This project also runs in an **Azure Virtual Machine**, enabling the full ETL + ML pipeline to operate in the cloud.
+
+## VM Configuration
+
+* **OS:** Ubuntu 22.04 LTS
+* **Size:** Standard B2s (2 vCPUs, 4 GB RAM)
+* **Disk:** 64 GB SSD
+* **Access:** SSH key authentication
+* **Public IP:** Used to access Streamlit, Grafana, Prometheus, MinIO, and RabbitMQ
+
+## Open Inbound Ports
+
+These ports were enabled in the VM’s Network Security Group:
+
+| Port      | Service                |
+| --------- | ---------------------- |
+| **22**    | SSH                    |
+| **8501**  | Streamlit UI           |
+| **9001**  | MinIO Console          |
+| **9090**  | Prometheus             |
+| **3000**  | Grafana                |
+| **8080**  | Scheduler API          |
+
+All other services communicate internally via Docker’s network.
+
+## Folder Structure on Azure
+
+Matches the repository, with additional auto-generated data folders:
+
+```
+Pipeline/
+├── extractor/          # Bronze
+├── transformer/        # Silver
+├── cleaner/            # Gold
+├── scheduler/
+├── streamlit/
+├── monitoring/
+├── docker-compose.yaml
+├── .env
+├── backfill.json
+├── streaming.json
+│
+├── minio-data/         # Auto-created
+├── grafana_data/       # Auto-created
+├── prometheus_data/    # Auto-created
+├── data/
+│   └── gold/           # DuckDB Gold layer
+```
+
+## Differences From Local Deployment
+
+* Use `http://<VM-PUBLIC-IP>:<port>` instead of `localhost`.
+* Data directories (MinIO, DuckDB, Grafana, Prometheus) persist on VM disk.
+* Requires explicit inbound port rules for each service.
+* SSH is used to upload files and run Docker commands.
+
+---
