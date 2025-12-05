@@ -74,6 +74,7 @@ services:
       - "8003:8000"   # host 8003 -> container 8000
     restart: unless-stopped
 
+
   scheduler:
     build: ./scheduler
     container_name: scheduler
