@@ -10,8 +10,8 @@ import pika
 import pandas as pd
 from prometheus_client import Counter, Histogram, Gauge, start_http_server
 
-from minio_io import MinioCSVSource, MissingObject
-from duckdb_writer import DuckDBWriter
+from cleaner.minio_io import MinioCSVSource, MissingObject
+from cleaner.duckdb_writer import DuckDBWriter
 
 logging.basicConfig(level=logging.INFO, format="[cleaner] %(message)s")
 logging.getLogger("pika").setLevel(logging.WARNING)
