@@ -45,7 +45,7 @@ services:
       minio:
         condition: service_healthy
     ports:
-      - "8001:8001"   # Added for GitHub Action health check
+      - "8001:8000"   # host 8001 -> container 8000 (Prometheus metrics)
     restart: unless-stopped
 
   transformer:
@@ -58,7 +58,7 @@ services:
       minio:
         condition: service_healthy
     ports:
-      - "8002:8002"   # Added for GitHub Action health check
+      - "8002:8000"   # host 8002 -> container 8000
     restart: unless-stopped
 
   cleaner:
@@ -71,7 +71,7 @@ services:
     volumes:
       - ./data/gold:/data/gold
     ports:
-      - "8003:8003"   # Added for GitHub Action health check
+      - "8003:8000"   # host 8003 -> container 8000
     restart: unless-stopped
 
   scheduler:
