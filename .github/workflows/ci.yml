@@ -54,6 +54,31 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        
+      - name: Create CI .env file
+        run: |
+          cat << 'EOF' > .env
+          MINIO_API_PORT=9000
+          MINIO_CONSOLE_PORT=9001
+          MINIO_USER=ci-minio-user
+          MINIO_PASS=ci-minio-pass
+          RABBIT_PORT=5672
+          RABBIT_UI=15672
+          RABBIT_USER=guest
+          RABBIT_PASS=guest
+          MINIO_ENDPOINT=minio:9000
+          MINIO_SSL=false
+
+          RAW_BUCKET=crash-raw
+          XFORM_BUCKET=crash-xform
+          CLEAN_QUEUE=clean
+          EXTRACT_QUEUE=extract
+          TRANSFORM_QUEUE=transform
+
+          GOLD_DB_PATH=/data/gold/gold.duckdb
+          GOLD_TABLE=gold."gold"."crashes"
+          RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+          EOF
 
       # Build key services to ensure Dockerfiles & wiring are valid
       - name: Build key services with docker compose
