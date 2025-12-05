@@ -44,6 +44,8 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+    ports:
+      - "8001:8001"   # Added for GitHub Action health check
     restart: unless-stopped
 
   transformer:
@@ -55,6 +57,8 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+    ports:
+      - "8002:8002"   # Added for GitHub Action health check
     restart: unless-stopped
 
   cleaner:
@@ -66,6 +70,8 @@ services:
       minio:    { condition: service_healthy }
     volumes:
       - ./data/gold:/data/gold
+    ports:
+      - "8003:8003"   # Added for GitHub Action health check
     restart: unless-stopped
 
   scheduler:
@@ -77,15 +83,13 @@ services:
       - ./data/scheduler:/data
 
   streamlit:
-    build: ./streamlit          # folder containing the Dockerfile & Home.py
+    build: ./streamlit
     container_name: streamlit
     ports:
       - "8501:8501"
-      - "8000:8000" 
+      - "8000:8000"
     environment:
-      # Point the UI to your backend gateway used by Home.py (API_BASE)
-      # If your API is also in compose, use its service name + port.
-      API_BASE: "http://scheduler:8080"  
+      API_BASE: "http://scheduler:8080"
       MINIO_URL: "http://minio:9000"
       RABBIT_API: "http://rabbitmq:15672/api"
       RABBIT_USER: "guest"
@@ -106,8 +110,6 @@ services:
     depends_on:
       - rabbitmq
       - minio
-      # If you serve Streamlit behind a reverse proxy with a path, add:
-      # STREAMLIT_SERVER_BASE_URL_PATH: "/app"
     restart: unless-stopped
 
   prometheus:
@@ -131,7 +133,6 @@ services:
       - prometheus
     restart: unless-stopped
 
-  
   rabbitmq-exporter:
     image: kbudde/rabbitmq-exporter
     ports:
@@ -144,8 +145,5 @@ services:
       - rabbitmq
     restart: unless-stopped
 
-  
 volumes:
   prometheus_data:
-
-
