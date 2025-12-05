@@ -39,8 +39,8 @@ jobs:
       # --- Import checks: ensure main modules import cleanly ---
       - name: Validate Python imports
         run: |
-          python -c "import transformer.transformer"
-          python -c "import cleaner.cleaner"
+          python -c "import transformer.transformer as t"
+          python -c "import cleaner.cleaner as c"
           python -c "import streamlit.Home"
           python -c "import scheduler.api"
 
