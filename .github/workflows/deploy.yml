@@ -45,16 +45,18 @@ jobs:
             cd \"$PROJECT_PATH\"
 
             echo '🔍 Checking Streamlit health...'
-            curl -f http://localhost:8501/health
+            # Root is fine – just needs a 200 response
+            curl -f http://localhost:8501/
 
-            echo '🔍 Checking Extractor health...'
-            curl -f http://localhost:8001/health
+            echo '🔍 Checking Extractor metrics...'
+            curl -f http://localhost:8001/metrics
 
-            echo '🔍 Checking Transformer health...'
-            curl -f http://localhost:8002/health
+            echo '🔍 Checking Transformer metrics...'
+            curl -f http://localhost:8002/metrics
 
-            echo '🔍 Checking Cleaner health...'
-            curl -f http://localhost:8003/health
+            echo '🔍 Checking Cleaner metrics...'
+            curl -f http://localhost:8003/metrics
 
             echo '✅ All HTTP health checks passed.'
           "
+
