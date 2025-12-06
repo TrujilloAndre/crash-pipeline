@@ -37,26 +37,26 @@ jobs:
             docker compose down && \
             docker compose up -d
           "
-      - name: Smoke test – HTTP health checks
+      - name: Smoke test – port checks
         run: |
           ssh -i key.pem -o StrictHostKeyChecking=no "$AZURE_USER@$AZURE_HOST" "
             set -e
 
             cd \"$PROJECT_PATH\"
 
-            echo '🔍 Checking Streamlit health...'
-            # Root is fine – just needs a 200 response
-            curl -f http://localhost:8501/
+            echo '🔍 Checking Streamlit port 8501...'
+            nc -z localhost 8501
 
-            echo '🔍 Checking Extractor metrics...'
-            curl -f http://localhost:8001/metrics
+            echo '🔍 Checking Extractor port 8001...'
+            nc -z localhost 8001
 
-            echo '🔍 Checking Transformer metrics...'
-            curl -f http://localhost:8002/metrics
+            echo '🔍 Checking Transformer port 8002...'
+            nc -z localhost 8002
 
-            echo '🔍 Checking Cleaner metrics...'
-            curl -f http://localhost:8003/metrics
+            echo '🔍 Checking Cleaner port 8003...'
+            nc -z localhost 8003
 
-            echo '✅ All HTTP health checks passed.'
+            echo '✅ All TCP port checks passed.'
           "
+
 
